@@ -1,8 +1,7 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.sql.Array;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class practice32 {
 
@@ -33,36 +32,29 @@ public class practice32 {
 *
 * */
 
-    public int[] solution(String[] id_list, String[] report, int k) {
+    public int[] solution(String[] id_list, String[] reports, int k) {
         int[] answer = {};
-        int[] report_count = {};
+        int[] reported_count = {};
 
         answer = new int[id_list.length];
-        report_count = new int[id_list.length];
+        reported_count = new int[id_list.length];
 
+        String[] reportList = Arrays.stream(reports).distinct().toArray(String[]::new);
 
-        ArrayList<String> list = new ArrayList<>();
-
-        for (String s : report) {
-            if (!list.contains(s)) {
-                list.add(s);
-            }
-        }
-
-        for (String s : list) {
-            String[] member = s.split(" ");
+        for (String report : reportList) {
+            String[] member = report.split(" ");
             int num = Arrays.asList(id_list).indexOf(member[1]);
-            report_count[num] += 1;
+            reported_count[num] += 1;
         }
 
-        for (int i=0; i< report_count.length; i++){
+        for (int i = 0; i < reported_count.length; i++) {
 
-            if(report_count[i]>=k){
-                String n = Arrays.asList(id_list).get(i);
+            if (reported_count[i] >= k) {
+                String reported = Arrays.asList(id_list).get(i);
 
-                for (String s : list) {
-                    String[] member = s.split(" ");
-                    if (n.equals(member[1])) {
+                for (String report : reportList) {
+                    String[] member = report.split(" ");
+                    if (reported.equals(member[1])) {
                         int num = Arrays.asList(id_list).indexOf(member[0]);
                         answer[num] += 1;
                     }
@@ -72,94 +64,123 @@ public class practice32 {
 
         return answer;
     }
-
-
-    public static int[] solution2(String[] id_list, String[] report, int k) {
-        int[] answer = new int[id_list.length];
-        Arrays.fill(answer,0);
-
-        ArrayList<String> list = new ArrayList<>();
-
-        //리포트에서 신고자와 신고받은사람 중복된거 빼고 리포트 만들기
-        for (String s : report) {
-            if (!list.contains(s)) {
-                list.add(s);
-            }
-        }
-
-        HashMap<String,Integer> reporter = new HashMap<>();
-        HashMap<String,Integer> reported = new HashMap<>();
-        List<String> reportedStrings = new ArrayList<>();
-        List<String> reporterStrings = new ArrayList<>();
-
-        for (int i=0;i<list.size();i++){
-            // 리포트 들어온거 신고자와 신고받은사람으로 나누기
-            String[] man = list.get(i).split(" ");
-
-            reporterStrings.add(man[0]);
-
-            // 신고자 해쉬맵에 추가
-            if(!reporter.containsKey(man[0])){
-                reporter.put(man[0],0);
-            }
-
-            // 리포트에서 신고받은사람이 해쉬맵에 없으면 추가
-            if(!reported.containsKey(man[1])){
-                reported.put(man[1],1);
-
-            } else{
-                // 이미 한번 신고받은사람이면 1회 추가
-                reported.put(man[1],reported.get(man[1])+1);
-
-                // 만약 신고횟수가 k번 이상이고, k번이상인게 처음이라면 제재자로 올리기기
-                if(reported.get(man[1])>=k && !reportedStrings.contains(man[1])){
-                    reportedStrings.add(man[1]);
-                    System.out.println("man[1] = " + man[1]);
-                }
-
-            }
-
-
-        }
-
-
-        // 신고자 있으면 목록에서 반복문
-        for(int j=0; j<reportedStrings.size(); j++){
-            // 제재자 목록에서 신고자 뽑아내기
-            for(int i=0; i< list.size(); i++){
-                // 리포트 들어온거 신고자와 신고받은사람으로 나누기
-                String[] man = list.get(i).split(" ");
-
-                // 만약 제재자 리스트와 신고받은사람이 같다면 신고자 해쉬맵에 횟수 추가해주기기
-                if(man[1].equals(reportedStrings.get(j))){
-                    System.out.println("확인 = " + reporter.get(man[0]));
-                    System.out.println("확인 = " + reporter.get(man[0])+1);
-
-                    reporter.put(man[0],reporter.get(man[0])+1);
-                }
-            }
-        }
-
-
-        for(int i=0; i<reporterStrings.size();i++){
-            String s_reporter = reporterStrings.get(i);
-            if(reporter.containsKey(s_reporter)){
-                int num = Arrays.asList(id_list).indexOf(s_reporter);
-                answer[num] = reporter.get(s_reporter);
-            }
-        }
-
-        return answer;
-    }
-
-
+//
+//
+//    public static int[] solution2(String[] id_list, String[] report, int k) {
+//        int[] answer = new int[id_list.length];
+//        Arrays.fill(answer, 0);
+//
+//        ArrayList<String> list = new ArrayList<>();
+//
+//        //리포트에서 신고자와 신고받은사람 중복된거 빼고 리포트 만들기
+//        for (String s : report) {
+//            if (!list.contains(s)) {
+//                list.add(s);
+//            }
+//        }
+//
+//        Map<String, Integer> reporter = new HashMap<>();
+//        Map<String, Integer> reported = new HashMap<>();
+//        List<String> reportedStrings = new ArrayList<>();
+//        List<String> reporterStrings = new ArrayList<>();
+//
+//        for (int i = 0; i < list.size(); i++) {
+//            // 리포트 들어온거 신고자와 신고받은사람으로 나누기
+//            String[] man = list.get(i).split(" ");
+//
+//            reporterStrings.add(man[0]);
+//
+//            // 신고자 해쉬맵에 추가
+//            if (!reporter.containsKey(man[0])) {
+//                reporter.put(man[0], 0);
+//            }
+//
+//            // 리포트에서 신고받은사람이 해쉬맵에 없으면 추가
+//            if (!reported.containsKey(man[1])) {
+//                reported.put(man[1], 1);
+//
+//            } else {
+//                // 이미 한번 신고받은사람이면 1회 추가
+//                reported.put(man[1], reported.get(man[1]) + 1);
+//
+//                // 만약 신고횟수가 k번 이상이고, k번이상인게 처음이라면 제재자로 올리기기
+//                if (reported.get(man[1]) >= k && !reportedStrings.contains(man[1])) {
+//                    reportedStrings.add(man[1]);
+//                }
+//
+//            }
+//
+//
+//        }
+//
+//
+//        // 신고자 있으면 목록에서 반복문
+//        for (int j = 0; j < reportedStrings.size(); j++) {
+//            // 제재자 목록에서 신고자 뽑아내기
+//            for (int i = 0; i < list.size(); i++) {
+//                // 리포트 들어온거 신고자와 신고받은사람으로 나누기
+//                String[] man = list.get(i).split(" ");
+//
+//                // 만약 제재자 리스트와 신고받은사람이 같다면 신고자 해쉬맵에 횟수 추가해주기기
+//                if (man[1].equals(reportedStrings.get(j))) {
+//                    reporter.put(man[0], reporter.get(man[0]) + 1);
+//                }
+//            }
+//        }
+//
+//
+//        for (int i = 0; i < reporterStrings.size(); i++) {
+//            String s_reporter = reporterStrings.get(i);
+//            if (reporter.containsKey(s_reporter)) {
+//                int num = Arrays.asList(id_list).indexOf(s_reporter);
+//                answer[num] = reporter.get(s_reporter);
+//            }
+//        }
+//
+//        return answer;
+//    }
+//
+//
     public static void main(String[] args) {
         String[] id_list = {"muzi", "frodo", "apeach", "neo"};
         String[] report = {"muzi frodo", "apeach frodo", "frodo neo", "muzi neo", "apeach muzi"};
         int k = 2;
 
-        solution2(id_list, report, 2 );
+        solution3(id_list, report, k);
     }
+
+
+    public static int[] solution3(String[] id_list, String[] report, int k) {
+        int[] answer = new int[id_list.length];
+        Map<String, HashSet<String>> map = new HashMap<>();
+        Map<String, Integer> idxMap = new HashMap<>();
+
+        for (int i = 0; i < id_list.length; i++) {
+            String name = id_list[i];
+            map.put( , new HashSet<>());
+            idxMap.put(name, i);
+        }
+
+        for (String s : report) {
+            String[] str = s.split(" ");
+            String from = str[0];
+            String to = str[1];
+            map.get(to).add(from);
+            System.out.println("map.get(to)" + map.get(to));
+            System.out.println(map.get(to).add(from));
+        }
+
+        for (int i = 0; i < id_list.length; i++) {
+            HashSet<String> send = map.get(id_list[i]);
+            if (send.size() >= k) {
+                for (String name : send) {
+                    answer[idxMap.get(name)]++;
+                }
+            }
+        }
+        return answer;
+    }
+
 
 
 }
