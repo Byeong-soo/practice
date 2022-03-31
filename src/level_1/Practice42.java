@@ -1,5 +1,6 @@
 package level_1;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Practice42 {
@@ -15,27 +16,21 @@ public class Practice42 {
     * */
 
     public static int solution(int[] nums) {
-        int answer = -1;
+        int answer = 0;
         int n = nums.length;
         boolean[] visited = new boolean[n];
-        HashSet<Integer> sumList = new HashSet<>();
+        ArrayList<Integer> sumList = new ArrayList<>();
 
         comb(nums, visited, 0, n, 3, sumList);
 
         for(Integer s : sumList){
-            if(s%2==0)continue;
-
-            for(int i = 3; i<s; i++){
-                if(s%i == 0)break;
-                answer++;
-            }
-
+            if(check(s)) answer++;
         }
 
         return answer;
     }
 
-    static void comb(int[] arr, boolean[] visited, int depth, int n, int r, HashSet<Integer> sumList) {
+    static void comb(int[] arr, boolean[] visited, int depth, int n, int r, ArrayList<Integer> sumList) {
 
         if (r == 0) {
            sumList(arr, visited, n,sumList);
@@ -54,9 +49,7 @@ public class Practice42 {
 
     }
 
-
-    // 배열 출력
-    static void sumList(int[] arr, boolean[] visited, int n, HashSet<Integer> sumList) {
+    static void sumList(int[] arr, boolean[] visited, int n, ArrayList<Integer> sumList) {
         int sum = 0;
         for (int i = 0; i < n; i++) {
             if (visited[i]) {
@@ -64,6 +57,26 @@ public class Practice42 {
             }
         }
         sumList.add(sum);
+    }
+
+    public static boolean check ( int n){
+        boolean check = false;
+
+        //짝수면 소수아님. 바로 리턴
+        if (n % 2 == 0) {
+            return check;
+        } else {
+            for (int i = 2; i < n; i++) {
+                if (n % i == 0) {
+                    check = false;
+                    break;
+                } else {
+                    check = true;
+                }
+            }
+        }
+
+        return check;
     }
 
     public static void main(String[] args) {
